@@ -1,0 +1,151 @@
+---
+title: "0. Setup"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This file will walk through the installation of any needed packages. We will consider three types of packages:
+
+ * **CRAN** - this is where most R packages reside, and it has extensive automated testing to ensure quality.
+ * **GitHub** - these are more "bleeding edge" packages that may not have as much testing.
+ * **BioConductor** - these are packages designed for computational biology applications.
+
+General notes
+
+ * If given the choice, do not compile packages from source (it's more error-prone).
+ * If there's a corruption error message, try restarting your R session and trying again (Session -> Restart R).
+ * If asked, try to update existing packages. But if that causes errors, run it again and don't update existing packages.
+
+## Check requirements
+
+```{r check_requirements}
+min_r_version = 3.6
+
+r_version = as.numeric(paste0(R.version["major"], ".", as.integer(R.version["minor"])))
+
+if (r_version < min_r_version) {
+  cat(paste0("Error: your R software is out of date.\n",
+      "Minimum version required: ", min_r_version, "\n",
+      "R version detected: ", r_version, "\n",
+      "Please download and install the latest version from: https://cloud.r-project.org/"))
+} else {
+  cat("Your R software is up to date:", r_version)
+}
+```
+
+## Package installation
+
+### Cran packages
+
+```{r cran_packages}
+packages = list(
+  cran = c("h2o",         # glrm, anomaly forests
+           "dbscan",      # hdbscan
+           "poLCA",       # latent class analysis
+           "umap",        # umap
+           "BiocManager", # needed to install hopach
+           "remotes")     # installation of packages from GitHub
+)
+
+# Try to load each package and save the result.
+(install_status = suppressWarnings(sapply(packages$cran, require, character.only = TRUE, quietly = TRUE)))
+
+# Check if any packages still need to be installed, and if so, try to install them.
+if (sum(!install_status) > 0) {
+  cat("The following CRAN packages need to be installed:",
+      paste0(paste(names(install_status)[!install_status], collapse = ", "), ".\n"))
+  
+  # Install any needed packages.
+  install.packages(packages$cran[!install_status])
+  
+  # Load the newly installed packages.
+  recheck = suppressWarnings(sapply(packages$cran[!install_status], require, character.only = TRUE, quietly = TRUE))
+  
+  if (sum(!recheck) > 0) {
+    cat("Failed to install the following CRAN packages:",
+        paste0(paste(names(recheck)[!recheck], collapse = ", "), "."),
+        "\nPlease try installing them manually with install.packages()",
+        "and closely reviewing any error messages.")
+  } else {
+    cat("CRAN packages installed successfully.")
+  }
+} else {
+  cat("All CRAN packages are installed and loaded.")
+}
+
+```
+
+### GitHub packages
+
+```{r github_packages}
+packages$github = c("ck37r" = "ck37/ck37r")
+
+# Try to load each package and save the result.
+install_status = suppressWarnings(sapply(names(packages$github),
+                                          require, character.only = TRUE, quietly = TRUE))
+
+# Check if any packages still need to be installed, and if so, try to install them.
+if (sum(!install_status) > 0) {
+  cat("The following GitHub packages need to be installed:",
+      paste0(paste(names(install_status)[!install_status], collapse = ", "), "."))
+  
+  # Install any needed packages.
+  remotes::install_github(packages$github[!install_status])
+  
+  # Load the newly installed packages.
+  recheck = suppressWarnings(sapply(names(packages$github)[!install_status],
+                                    require, character.only = TRUE, quietly = TRUE))
+  
+  if (sum(!recheck) > 0) {
+    cat("Failed to install the following GitHub packages:",
+        paste0(paste(packages$github[names(recheck)[!recheck]], collapse = ", "), "."),
+        "\nPlease try installing them manually with remotes::install_github()",
+        "and closely reviewing any error messages.")
+  } else {
+    cat("GitHub packages installed successfully.")
+  }
+} else {
+  cat("All GitHub packages are installed and loaded.")
+}
+```
+
+### Bioconductor packages
+
+```{r biocon_packages}
+packages$bioconductor = c("hopach")
+
+# Try to load each package and save the result.
+(install_status = suppressWarnings(sapply(packages$bioconductor,
+                                          require, character.only = TRUE, quietly = TRUE)))
+
+# Check if any packages still need to be installed, and if so, try to install them.
+if (sum(!install_status) > 0) {
+  cat("The following Bioconductor packages need to be installed:",
+      paste0(paste(names(install_status)[!install_status], collapse = ", "), "."))
+  
+  # Install any needed packages.
+  BiocManager::install(packages$bioconductor[!install_status])
+  
+  # Load the newly installed packages.
+  recheck = suppressWarnings(sapply(packages$bioconductor[!install_status],
+                                    require, character.only = TRUE, quietly = TRUE))
+  
+  if (sum(!recheck) > 0) {
+    cat("Failed to install the following Bioconductor packages:",
+        paste0(paste(packages$github[names(recheck)[!recheck]], collapse = ", "), "."),
+        "\nPlease try installing them manually with BiocManager::install()",
+        "and closely reviewing any error messages.")
+  } else {
+    cat("Bioconductor packages installed successfully.")
+  }
+} else {
+  cat("All Bioconductor packages are installed and loaded.")
+}
+```
+
+## Slides
+
+Now open up the slides available here: [TBD].
