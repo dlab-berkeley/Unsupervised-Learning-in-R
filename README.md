@@ -15,12 +15,25 @@ This is an intermediate machine learning workshop. Participants should have
 significant prior experience with R and RStudio, including manipulation of data
 frames, installation of packages, and plotting.
 
+**Prerequisite workshops**
+
+ * [R Fundamentals](https://github.com/dlab-berkeley/R-Fundamentals)
+ 
+ 
+**Recommended workshops**
+
+ * [Machine Learning in R](https://github.com/dlab-berkeley/Machine-Learning-in-R)
+
 ## Technology requirements
 
 Participants should have access to a computer with the following software:
 
  * R version 3.6 or greater
  * RStudio
+ 
+## Reporting errors or giving feedback
+
+Please [create a GitHub issue](https://github.com/dlab-berkeley/Unsupervised-Learning-in-R/issues) to report any errors or give feedback on this workshop.
 
 ## Resources
 
