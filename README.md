@@ -31,6 +31,10 @@ Participants should have access to a computer with the following software:
  * R version 3.6 or greater
  * RStudio
  
+## Initial steps for participants
+
+To prepare for the workshop, please download the materials and work through the package installation in `0-setup.Rmd`. Please report any errors to the [GitHub issue queue](https://github.com/dlab-berkeley/Unsupervised-Learning-in-R/issues).
+ 
 ## Reporting errors or giving feedback
 
 Please [create a GitHub issue](https://github.com/dlab-berkeley/Unsupervised-Learning-in-R/issues) to report any errors or give feedback on this workshop.
