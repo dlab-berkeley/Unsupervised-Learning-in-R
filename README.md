@@ -19,7 +19,6 @@ frames, installation of packages, and plotting.
 
  * [R Fundamentals](https://github.com/dlab-berkeley/R-Fundamentals)
  
- 
 **Recommended workshops**
 
  * [Machine Learning in R](https://github.com/dlab-berkeley/Machine-Learning-in-R)
@@ -43,6 +42,7 @@ Please [create a GitHub issue](https://github.com/dlab-berkeley/Unsupervised-Lea
 
 Books
 
+ * Hennig et al. (2015). [Handbook of Cluster Analysis](https://smile.amazon.com/Handbook-Cluster-Analysis-Handbooks-Statistical-ebook/dp/B019FNKOJ4)
  * Boemke & Greenwell (2019). [Hands-on Machine Learning with R](https://bradleyboehmke.github.io/HOML/) - free online version
  * Izenman (2013). [Modern Multivariate Statistical Techniques](https://www.amazon.com/Modern-Multivariate-Statistical-Techniques-Classification-ebook/dp/B00HWUR9CS/)
  * Everitt et al. (2011). [Cluster Analysis](https://www.amazon.com/Cluster-Analysis-Wiley-Probability-Statistics-ebook/dp/B005CPJSME)
