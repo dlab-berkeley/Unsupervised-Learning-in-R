@@ -10,12 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Highlights
 
-  * HDBScan is a density-based clustering algorithm, where observations that are near each other get assigned to clusters
-  * Observations that are not near a group are considered noise or outliers.
-  * It is hierarchical, meaning that we can choose to select fewer clusters with more observations if preferred.
-  * Because of its focus on density, it is intended for continuous variables.
-  * It is expected to slow down once there are more than 50-100 covariates.
-  * It provides a loose form of soft clustering: a score for how certain it is about cluster membership.
+* HDBScan is a **density-based clustering** algorithm, where observations that are near each other get assigned to clusters
+* Observations that are not near a group are considered noise or outliers.
+* The number of clusters is discovered automatically - nice!
+* It is hierarchical, meaning that clusters are linked and we can choose to select fewer clusters with more observations if preferred.
+* It is intended for continuous variables due to its focus on density.
+* It is expected to slow down once there are more than 50-100 covariates.
+* It provides a loose form of **soft clustering**: a score for how certain it is about cluster membership.
 
 ## Load processed data
 
