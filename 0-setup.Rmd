@@ -48,6 +48,7 @@ packages = list(
            "umap",        # umap
            "BiocManager", # needed to install hopach
            "rio",         # Import/export
+           "ggplot2",     # plotting
            "remotes")     # installation of packages from GitHub
 )
 
