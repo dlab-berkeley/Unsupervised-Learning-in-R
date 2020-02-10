@@ -28,7 +28,11 @@ if (!file.exists(full_file)) {
 } else {
   data = rio::import(full_file)
 }
+```
 
+## Categoricals to factors
+
+```{r categoricals_to_factors}
 
 # Explicitly define certain variables as factors rather than numbers.
 data = ck37r::categoricals_to_factors(data,
@@ -38,7 +42,7 @@ data = ck37r::categoricals_to_factors(data,
 str(data)
 ```
 
-## Save unimmputed version
+## Save unimputed version
 
 ```{r save_unimputed}
 save(data, file = "data/clean-data-unimputed.RData")
