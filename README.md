@@ -36,6 +36,8 @@ Participants should have access to a computer with the following software:
 ## Initial steps for participants
 
 To prepare for the workshop, please download the materials and work through the package installation in `0-setup.Rmd`. Please report any errors to the [GitHub issue queue](https://github.com/dlab-berkeley/Unsupervised-Learning-in-R/issues).
+
+There is also an [RStudio Cloud workspace](https://rstudio.cloud/project/930459) that can be used.
  
 ## Reporting errors or giving feedback
 
