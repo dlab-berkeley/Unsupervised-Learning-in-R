@@ -1,0 +1,122 @@
+---
+title: "UMAP: Uniform Manifold Approximation and Projection"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Highlights
+
+
+
+## Data prep
+
+We're trying out a separate birth weight dataset.
+
+```{r data_prep}
+data = MASS::birthwt
+summary(data)
+?MASS::birthwt
+data$race = factor(data$race, labels = c("white", "black", "other"))
+str(data)
+
+# Create a list to hold different variables.
+task = list(
+  # Birth weight or low are generally our outcomes for supervised analyses.
+  outcomes = c("bwt", "low"),
+  
+  # Variables we want to exclude from our analysis - none currently.
+  exclude = NULL
+)
+
+task$covariates = setdiff(names(data), task$outcomes)
+
+# Review our data structure.
+task
+
+dplyr::glimpse(data[task$covariates])
+sapply(data[task$covariates], class)
+
+
+# Convert factor to indicators - don't run on outcomes though.
+result = ck37r::factors_to_indicators(data, predictors = task$covariates, verbose = TRUE)
+data = result$data
+```
+
+## Basic UMAP
+
+```{r basic_umap}
+library(umap)
+
+# Conduct UMAP analysis of our matrix data, setting a random seed.
+result = umap(data, random_state = 1)
+```
+
+## Plot UMAP
+
+```{r umap_plot}
+library(ggplot2)
+
+# Compile results into a dataframe.
+plot_data = data.frame(x = result$layout[, 1],
+                       y = result$layout[, 2],
+                       data[, task$outcomes])
+
+# Create an initial plot object.
+p = ggplot(data = plot_data, aes(x = x, y = y, color = bwt)) +
+  theme_minimal()
+
+p + geom_point() + ggtitle("Continuous birth weight")
+
+# Compare to the binarized outcome.
+p + geom_point(aes(color = low)) + ggtitle("Low birth weight = 1")
+```
+
+## Hyperparameters
+
+```{r}
+# Review default settings.
+umap.defaults
+
+config = umap.defaults
+
+# Set a seed.
+config$random_state = 1
+config$n_neighbors = 30
+
+# Run umap with new settings.
+result2 = umap(data, config)
+
+p + geom_point(aes(x = result2$layout[, 1],
+                   y = result2$layout[, 2]))
+
+# Try even more neighbors.
+config$n_neighbors = 60
+
+result3 = umap(data, config)
+
+p + geom_point(aes(x = result3$layout[, 1],
+                   y = result3$layout[, 2]))
+```
+
+More info on hyperparameters on the [umap-learn python documentation page](https://umap-learn.readthedocs.io/en/latest/parameters.html).
+
+```{r}
+?umap
+```
+
+## Challenge
+
+* Try out on heart dataset
+
+## Resources
+
+  * Arxiv paper: (https://arxiv.org/abs/1802.03426)
+  * PyData 2018 talk (PCA, tSNE, and UMAP): (https://www.youtube.com/watch?v=YPJQydzTLwQ)
+  * PyCon 2018 talk: (https://www.youtube.com/watch?v=nq6iPZVUxZU)
+
+## References
+
+
