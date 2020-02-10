@@ -266,6 +266,7 @@ str(new_data)
 ## Challenge
 
 1. Apply hdbscan to our compressed dataframe. Can you find a more effective clustering than the original?
+2. What about UMAP - how does it look?
 
 ## Resources
 
