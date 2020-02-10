@@ -83,6 +83,8 @@ if (sum(!install_status) > 0) {
 
 ### GitHub packages
 
+Note that the ck37r package is now also on CRAN, but it's good to show GitHub installation for posterity.
+
 ```{r github_packages}
 packages$github = c("ck37r" = "ck37/ck37r")
 
