@@ -1,5 +1,6 @@
 # Unsupervised Learning in R
 
+
 Unsupervised machine learning is a class of algorithms that identifies patterns
 in unlabeled data, i.e. without considering an outcome or target. This workshop
 will describe and demonstrate powerful unsupervised learning algorithms used for
@@ -8,6 +9,8 @@ reduction (generalized low-rank models), visualization (umap), and anomaly detec
 Participants will learn how to structure unsupervised
 learning analyses and will gain familiarity with example code that can be
 adapted to their own projects.
+
+**Author**: [Chris Kennedy](http://github.com/ck37)
 
 ## Prerequisites
 
