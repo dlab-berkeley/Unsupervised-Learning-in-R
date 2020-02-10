@@ -16,7 +16,7 @@ library(dbscan)
   * It is hierarchical, meaning that we can choose to select fewer clusters with more observations if preferred.
   * Because of its focus on density, it is intended for continuous variables.
   * It is expected to slow down once there are more than 50-100 covariates.
-  * It provides soft clustering: a probability distribution for membership in each cluster.
+  * It provides a loose form of soft clustering: a score for how certain it is about cluster membership.
 
 ## Load processed data
 
