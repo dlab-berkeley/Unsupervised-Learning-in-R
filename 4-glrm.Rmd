@@ -253,10 +253,25 @@ Our evaluation of imputation accuracy is optimistic because we are evaluating on
 
 There are many other hyperparameters for GLRM that would be preferably tuned to the characteristics of our dataset. See [Hands on Machine Learning](https://bradleyboehmke.github.io/HOML/GLRM.html#tuning-to-optimize-for-unseen-data) for code that implements a grid search. We also could try a random search or optimized search.
 
+## Clustering after GLRM
+
+```{r cluster}
+# Extract the components as a new condensed dataframe.
+new_data = as.data.frame(h2o.getFrame(glrm_result@model$representation_name))
+dim(new_data)
+summary(new_data)
+str(new_data)
+```
+
+## Challenge
+
+1. Apply hdbscan to our compressed dataframe. Can you find a more effective clustering than the original?
+
 ## Resources
 
 * [GLRM in Hands-on Machine Learning](https://bradleyboehmke.github.io/HOML/GLRM.html)
 * [h2o GLRM manual](http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/glrm.html)
+* [another h2o glrm tutorial](http://docs.h2o.ai/h2o-tutorials/latest-stable/tutorials/glrm/glrm-tutorial.html)
 
 ## References
 
