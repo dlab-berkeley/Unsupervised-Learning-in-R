@@ -6,7 +6,6 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(dbscan)
 ```
 
 ## Highlights
@@ -44,6 +43,8 @@ str(data)
 ## Basic hdbscan
 
 ```{r basic}
+library(dbscan)
+
 (groups = hdbscan(data[, task$continuous], minPts = 5L))
 
 library(ggplot2)
