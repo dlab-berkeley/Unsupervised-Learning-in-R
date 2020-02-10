@@ -1,4 +1,5 @@
 ---
+title: "Clean data"
 output: html_document
 ---
 
@@ -35,16 +36,29 @@ data = ck37r::categoricals_to_factors(data,
               verbose = TRUE)
 
 str(data)
+```
+
+## Save unimmputed version
+
+```{r save_unimputed}
+save(data, file = "data/clean-data-unimputed.RData")
+```
+
+## Missing values
+
+```{r missing_values}
 
 # We have a few missing values.
 colSums(is.na(data))
+
 # Omit missing values for now.
 data = na.omit(data)
+
 colSums(is.na(data))
 ```
 
 ## Save result
 
 ```{r save_data}
-save(data, file = "data/data-processed.RData")
+save(data, file = "data/clean-data-imputed.RData")
 ```
