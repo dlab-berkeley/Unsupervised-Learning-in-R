@@ -85,7 +85,7 @@ p + geom_point(aes(color = low)) + ggtitle("Low birth weight = 1")
 
 The most important hyperparameter is the number of neighbors, which controls how UMAP balances the detection of local versus global structure. With a low number of neighbors we concentrate on the local structure (nearby observations), whereas with a high number of neighbors global structure (patterns between all observations).
 
-```{r}
+```{r modify_hyperparameters}
 # Review default settings.
 umap.defaults
 
@@ -123,7 +123,7 @@ Noting a few other highlights:
 
 * Experiment with min_dist - what value strikes the right balance for visualization?
 
-```{r}
+```{r review_defaults}
 # Review the many other hyperparameters.
 umap.defaults
 help(umap.defaults)
@@ -133,7 +133,7 @@ Also note that when calling umap, the function argument `method` can be changed 
 
 More info on hyperparameters on the [umap-learn python documentation page](https://umap-learn.readthedocs.io/en/latest/parameters.html).
 
-```{r}
+```{r check_help, eval=FALSE}
 ?umap
 ```
 
@@ -143,9 +143,10 @@ More info on hyperparameters on the [umap-learn python documentation page](https
 
 ## Resources
 
-  * Arxiv paper: (https://arxiv.org/abs/1802.03426)
-  * PyData 2018 talk (PCA, tSNE, and UMAP): (https://www.youtube.com/watch?v=YPJQydzTLwQ)
-  * PyCon 2018 talk: (https://www.youtube.com/watch?v=nq6iPZVUxZU)
+* [Performance comparison of UMAP vs. tSNE, PCA, etc.](https://umap-learn.readthedocs.io/en/latest/benchmarking.html)
+* Arxiv paper: (https://arxiv.org/abs/1802.03426)
+* PyData 2018 talk (PCA, tSNE, and UMAP): (https://www.youtube.com/watch?v=YPJQydzTLwQ)
+* PyCon 2018 talk: (https://www.youtube.com/watch?v=nq6iPZVUxZU)
 
 ## References
 
