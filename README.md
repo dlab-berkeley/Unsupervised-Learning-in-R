@@ -5,7 +5,7 @@ Unsupervised machine learning is a class of algorithms that identifies patterns
 in unlabeled data, i.e. without considering an outcome or target. This workshop
 will describe and demonstrate powerful unsupervised learning algorithms used for
 clustering (hdbscan, latent class analysis, hopach), dimensionality
-reduction (generalized low-rank models), visualization (umap), and anomaly detection (isolation forests).
+reduction (umap, generalized low-rank models), and anomaly detection (isolation forests).
 Participants will learn how to structure unsupervised
 learning analyses and will gain familiarity with example code that can be
 adapted to their own projects.
