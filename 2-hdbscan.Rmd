@@ -1,0 +1,126 @@
+---
+title: "HDBScan: density-based clustering"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dbscan)
+```
+
+## Highlights
+
+  * HDBScan is a density-based clustering algorithm, where observations that are near each other get assigned to clusters
+  * Observations that are not near a group are considered noise or outliers.
+  * It is hierarchical, meaning that we can choose to select fewer clusters with more observations if preferred.
+  * Because of its focus on density, it is intended for continuous variables.
+  * It is expected to slow down once there are more than 50-100 covariates.
+  * It provides soft clustering: a probability distribution for membership in each cluster.
+
+## Load processed data
+
+```{r load_data}
+# From 1-clean-data.Rmd
+data = rio::import("data/data-processed.RData")
+
+# Convert factors to indicators.
+# This could also be done in dplyr in one line.
+result = ck37r::factors_to_indicators(data, verbose = TRUE)
+data = result$data
+
+str(data)
+```
+
+## Data structure
+
+```{r data_structure}
+(task = list(
+  continuous = c("age", "trestbps", "chol", "thalach"),
+  all = names(data)
+))
+```
+
+## Basic hdbscan
+
+```{r basic}
+(groups = hdbscan(data[, task$continuous], minPts = 5L))
+
+library(ggplot2)
+
+qplot(data$thalach, data$trestbps, color = factor(groups$cluster)) + 
+  theme_minimal() + theme(legend.position = c(1, 0.8))
+
+# Plot the cluster hierarchy - may look a bit bad.
+plot(groups$hc, main = "HDBSCAN* Hierarchy")
+```
+
+## Challenge
+
+1. Try varying the minimum number of points needed for a cluster. What is your ranking of best values?
+2. Try changing the variables plotted. Does any show clear clustering?
+3. Try removing one of the continuous variables and re-running. Do you find better results?
+
+## Investigating hdbscan
+
+Let's answer a few more questions:
+
+  * What cluster is each observation assigned to, if any?
+  * How confident is the algorithm in each observation's cluster membership?
+  * How likely is an observation to be an outlier?
+
+```{r more}
+# Cluster assignment for each observation.
+groups$cluster
+table(groups$cluster, useNA = "ifany")
+
+# Confidence score for membership in the cluster, where 1 is the max 0 = outlier.
+groups$membership_prob
+summary(groups$membership_prob)
+qplot(groups$membership_prob) + theme_minimal()
+
+# Higher scores are more likely to be outliers.
+groups$outlier_scores
+qplot(groups$outlier_scores) + theme_minimal()
+
+# Update our plot using cluster membership for transparency.
+qplot(data$chol, data$trestbps, color = factor(groups$cluster),
+      # Scale by maximum membership probility so that max value is 100% opaque.
+      alpha = groups$membership_prob / max(groups$membership_prob)) + 
+  theme_minimal() + theme(legend.position = c(1, 0.6))
+
+
+# What are these cluster stability scores? Unknown to your instructor.
+groups$cluster_scores
+```
+
+The outlier score is estimated using the  Global-Local Outlier Score from Hierarchies (GLOSH) algorithm.
+
+## Additional hyperparameters
+
+Beyond what we've already covered, additional hyperparameters include:
+
+  * **Distance metric** - could be euclidean (default), manhattan, l1, l2, or any other distance metric.
+  * **Minimum samples** - unfortunately the R package doesn't support this paramter being different from "minPts", but in theory we could use a different value to choose how to smooth the density.
+  
+## Limitations
+
+The R package does not currently support prediction for hdbscan, although it can be done with dbscan. The python package does support prediction however.
+
+## Challenge
+
+1. Try running hdbscan with all variables instead of just the continuous ones. Can you achieve better results?
+
+## Resources
+
+* https://cran.r-project.org/web/packages/dbscan/vignettes/hdbscan.html
+* https://hdbscan.readthedocs.io/en/latest/comparing_clustering_algorithms.html
+* https://hdbscan.readthedocs.io/en/latest/prediction_tutorial.html
+
+## References
+
+L. McInnes, J. Healy, S. Astels, hdbscan: Hierarchical density based clustering In: Journal of Open Source Software, The Open Journal, volume 2, number 11. 2017
+
+Campello, Ricardo JGB, Davoud Moulavi, Arthur Zimek, and Jörg Sander. “Hierarchical density estimates for data clustering, visualization, and outlier detection.” ACM Transactions on Knowledge Discovery from Data (TKDD) 10, no. 1 (2015): 5.
+
+Hahsler M, Piekenbrock M, Doran D (2019). “dbscan: Fast Density-Based Clustering with R.” Journal of Statistical Software, 91(1), 1-30. doi: 10.18637/jss.v091.i01
