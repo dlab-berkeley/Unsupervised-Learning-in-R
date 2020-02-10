@@ -83,6 +83,8 @@ p + geom_point(aes(color = low)) + ggtitle("Low birth weight = 1")
 
 ## Hyperparameters
 
+The most important hyperparameter is the number of neighbors, which controls how UMAP balances the detection of local versus global structure. With a low number of neighbors we concentrate on the local structure (nearby observations), whereas with a high number of neighbors global structure (patterns between all observations).
+
 ```{r}
 # Review default settings.
 umap.defaults
@@ -112,9 +114,14 @@ p + geom_point(aes(x = result3$layout[, 1],
 
 Noting a few other highlights:
 
+* **min_dist** - how tightly UMAP can pack points together in the embedded space, default 0.1.
 * **n_components** - dimensions to return, typically 2 but can be larger.
 * **metric** - distance metric, such as euclidean, manhattan, cosine, etc.
 * **n_epochs** - number of optimization iterations to perform, default 200.
+
+## Challenge
+
+* Experiment with min_dist - what value strikes the right balance for visualization?
 
 ```{r}
 # Review the many other hyperparameters.
