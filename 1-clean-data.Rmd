@@ -1,0 +1,50 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Import data
+
+```{r import_data}
+data_raw_dir = "data-raw/"
+filename = "processed.cleveland.csv"
+full_file = paste0(data_raw_dir, filename)
+
+if (!file.exists(full_file)) {
+  url = "http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
+  # Load the remote data.
+  data = rio::import(url, header = FALSE, format = "csv", na.strings = '?')
+  
+  # Update column names.
+  names(data) = c("age", "sex", "cp", "trestbps", "chol","fbs", "restecg",
+                "thalach","exang", "oldpeak","slope", "ca", "thal", "num")
+  
+  # Save to local directory.
+  rio::export(data, file = full_file)
+} else {
+  data = rio::import(full_file)
+}
+
+
+# Explicitly define certain variables as factors rather than numbers.
+data = ck37r::categoricals_to_factors(data,
+              categoricals = c("ca", "cp", "slope", "thal"),
+              verbose = TRUE)
+
+str(data)
+
+# We have a few missing values.
+colSums(is.na(data))
+# Omit missing values for now.
+data = na.omit(data)
+colSums(is.na(data))
+```
+
+## Save result
+
+```{r save_data}
+save(data, file = "data/data-processed.RData")
+```
