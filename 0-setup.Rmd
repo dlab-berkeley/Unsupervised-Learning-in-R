@@ -47,7 +47,8 @@ packages = list(
            "poLCA",       # latent class analysis
            "umap",        # umap
            "BiocManager", # needed to install hopach
-           "rio",         # Import/export
+           "rio",         # import / export
+           "dplyr",       # data manipulation
            "ggplot2",     # plotting
            "remotes")     # installation of packages from GitHub
 )
@@ -70,12 +71,12 @@ if (sum(!install_status) > 0) {
     cat("Failed to install the following CRAN packages:",
         paste0(paste(names(recheck)[!recheck], collapse = ", "), "."),
         "\nPlease try installing them manually with install.packages()",
-        "and closely reviewing any error messages.")
+        "and closely reviewing any error messages.\n")
   } else {
-    cat("CRAN packages installed successfully.")
+    cat("CRAN packages installed successfully.\n")
   }
 } else {
-  cat("All CRAN packages are installed and loaded.")
+  cat("All CRAN packages are installed and loaded.\n")
 }
 
 ```
@@ -105,12 +106,12 @@ if (sum(!install_status) > 0) {
     cat("Failed to install the following GitHub packages:",
         paste0(paste(packages$github[names(recheck)[!recheck]], collapse = ", "), "."),
         "\nPlease try installing them manually with remotes::install_github()",
-        "and closely reviewing any error messages.")
+        "and closely reviewing any error messages.\n")
   } else {
-    cat("GitHub packages installed successfully.")
+    cat("GitHub packages installed successfully.\n")
   }
 } else {
-  cat("All GitHub packages are installed and loaded.")
+  cat("All GitHub packages are installed and loaded.\n")
 }
 ```
 
@@ -139,12 +140,12 @@ if (sum(!install_status) > 0) {
     cat("Failed to install the following Bioconductor packages:",
         paste0(paste(packages$github[names(recheck)[!recheck]], collapse = ", "), "."),
         "\nPlease try installing them manually with BiocManager::install()",
-        "and closely reviewing any error messages.")
+        "and closely reviewing any error messages.\n")
   } else {
-    cat("Bioconductor packages installed successfully.")
+    cat("Bioconductor packages installed successfully.\n")
   }
 } else {
-  cat("All Bioconductor packages are installed and loaded.")
+  cat("All Bioconductor packages are installed and loaded.\n")
 }
 ```
 
