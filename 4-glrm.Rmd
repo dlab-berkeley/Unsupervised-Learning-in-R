@@ -1,0 +1,265 @@
+---
+title: "GLRM: generalized low-rank models"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Highlights
+
+* GLRM is a linear dimensionality reduction algorithm similar to principal components analysis (PCA).
+* GLRM supports categorical, ordinal, and binary variables in addition to continuous variables.
+* It allows missing data, and can be used for missing data imputation.
+* It was invented in 2014 at Stanford and can be used in R through the java-based h2o.ai framework.
+
+
+## Load processed data
+
+```{r load_data}
+# From 1-clean-data.Rmd
+data = rio::import("data/clean-data-unimputed.RData")
+
+# Factors do not need to be converted to indicators.
+table(sapply(data, class))
+
+# We do have some missing data.
+colSums(is.na(data))
+```
+
+## Start h2o server
+
+```{r start_h2o}
+# Start h2o.
+h2o::h2o.no_progress()  # Turn off progress bars
+h2o::h2o.init() # Could specify e.g. max_mem_size = "4g"
+
+
+# Import data into h2o (java).
+h2o_df = h2o::as.h2o(data)
+
+# Looks good.
+str(h2o_df)
+```
+
+## Basic GLRM
+
+```{r basic_glrm}
+library(h2o)
+library(dplyr)
+library(ggplot2)
+
+system.time({
+glrm_result =
+  h2o::h2o.glrm(training_frame = h2o_df, cols = colnames(h2o_df),
+           loss = "Absolute",
+           seed = 1,
+           # Number of components, also called archetypes
+           k = 10,
+           max_iterations = 500,
+           # This is necessary to ensure that the model can optimize, otherwise
+           # there may be no improvement in the objective.
+           transform = "STANDARDIZE") 
+})
+
+plot(glrm_result)
+
+# Review components that are extracted.
+# We should see a smooth contribution to the variance.
+glrm_result@model$importance
+
+# If only one component is important then the glrm may not be functioning
+# correctly (e.g. data may need to be standardized).
+
+# This code is via Hands-on Machine Learning in R.
+data.frame(
+    component  = glrm_result@model$importance %>% seq_along(),
+    PVE = glrm_result@model$importance %>% .[2,] %>% unlist(),
+    CVE = glrm_result@model$importance %>% .[3,] %>% unlist()
+) %>%
+    tidyr::gather(metric, variance_explained, -component) %>%
+    ggplot(aes(component, variance_explained)) +
+    geom_point() + theme_minimal() + 
+    facet_wrap(~ metric, ncol = 1, scales = "free")
+```
+
+## Challenge
+
+1. How many components would you use?
+2. Try changing "Quadratic" to "Absolute". How many components would you use?
+
+## What is each component made of?
+
+```{r review_component}
+# This code is via Hands-on Machine Learning in R.
+p1 <- t(glrm_result@model$archetypes) %>% 
+  as.data.frame() %>% 
+  mutate(feature = row.names(.)) %>%
+  ggplot(aes(Arch1, reorder(feature, Arch1))) +
+  geom_point() + theme_minimal()
+
+p2 <- t(glrm_result@model$archetypes) %>% 
+  as.data.frame() %>% 
+  mutate(feature = row.names(.)) %>%
+  ggplot(aes(Arch1, Arch2, label = feature)) +
+  geom_text() + theme_minimal()
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+## Challenge
+
+1. Examine archetypes 2 and 3. How do they differ from archetype 1?
+
+## Respecting our data structure
+
+We had some factor variables, actually some of which were ordinal, as well as binary variables. Let's use GLRM's support for improved data types to use it.
+
+```{r glrm_v2}
+
+# When specifying the indices, the first variable must have index = 0
+(losses = data.frame("index" = seq(ncol(data)) - 1,
+                    "variable" = names(data),
+                    "loss" = "Quadratic",
+                    stringsAsFactors = FALSE))
+
+# Review data
+str(data)
+
+task = list(
+  binary = c("sex", "fbs", "exang"),
+  ordinal = c("restecg", "num", "slope", "ca", "thal", "cp")
+)
+
+# Customize loss for binary variables
+losses$loss[losses$variable %in% task$binary] = "Hinge"
+
+# Customize loss for ordinal variables
+losses$loss[losses$variable %in% task$ordinal] = "Ordinal"
+
+# Review our losses
+losses
+
+
+# Run with custom loss by variable type.
+system.time({
+glrm_result =
+  h2o::h2o.glrm(training_frame = h2o_df, cols = colnames(h2o_df),
+           loss_by_col = losses$loss,
+           loss_by_col_idx = losses$index,
+           seed = 1,
+           # Number of components, also called archetypes
+           k = 10,
+           max_iterations = 500,
+           # This is necessary to ensure that the model can optimize, otherwise
+           # there may be no improvement in the objective.
+           transform = "STANDARDIZE") 
+})
+
+# NOTE: there will be an error that we have to fix.
+names(h2o_df)[c(7, 14)]
+
+# h2o_df$restecg = as.factor(h2o_df$restecg)
+# h2o_df$num = as.factor(h2o_df$num)
+
+
+plot(glrm_result)
+
+# Review components that are extracted.
+# We should see a smooth contribution to the variance.
+glrm_result@model$importance
+
+# If only one component is important then the glrm may not be functioning
+# correctly (e.g. data may need to be standardized).
+data.frame(
+    component  = glrm_result@model$importance %>% seq_along(),
+    PVE = glrm_result@model$importance %>% .[2,] %>% unlist(),
+    CVE = glrm_result@model$importance %>% .[3,] %>% unlist()
+) %>%
+    tidyr::gather(metric, variance_explained, -component) %>%
+    ggplot(aes(component, variance_explained)) +
+    geom_point() + theme_minimal() + 
+    facet_wrap(~ metric, ncol = 1, scales = "free")
+```
+
+What changed once we customized the loss functions?
+
+## Missing value imputation
+
+We can use our GLRM model to impute all of the missing values in our dataframe.
+
+```{r missing_val}
+# Reconstructed data from GLRM.
+recon_df = h2o::h2o.reconstruct(glrm_result, h2o_df,
+                                reverse_transform = TRUE)
+# Fix column names.
+names(recon_df) = names(data)
+
+# Convert from h2o object (java) back to an R df.
+recon_df = as.data.frame(recon_df)
+
+# Notice that our factors have less variation.
+str(recon_df)
+
+###
+# Compare imputed values to known values.
+
+# Inspect the age variable as an example, even though we have all values.
+known_age = !is.na(data$age)
+
+# RMSE is very close to 0.
+sqrt(mean((data$age[known_age] - recon_df$age[known_age])^2))
+# Compare to median imputation, RMSE = 9.2
+sqrt(mean((data$age[known_age] - median(data$age[known_age]))^2))
+# Compare to mean imputation, RMSE = 9.0
+sqrt(mean((data$age[known_age] - mean(data$age[known_age]))^2))
+
+
+# We could exclude certain variables.
+skip_vars = c()
+
+(vars_with_missingness =
+  setdiff(names(data)[colSums(is.na(data)) > 0], skip_vars))
+
+# Review losses for variables with missingness.
+losses[losses$variable %in% vars_with_missingness, ]
+
+# Bound GLRM variables back to the original bounds.
+for (var in vars_with_missingness) {
+  
+  # Analyze the rows in which the variable is not missing.
+  missing_rows = is.na(data[[var]])
+  
+  # TODO: double-check that the factor levels are being copied over correctly.
+  # We may need to convert to a character first, and then to a factor
+  # using the levels of the original data column.
+  data[missing_rows, var] = recon_df[missing_rows, var]
+  
+  # NOTE: for continuous data, we would preferably bound the imputed values
+  # to stay within the range of the observed data. Code to be added.
+  
+}
+
+# Confirm that we have no missingness.
+colSums(is.na(data))
+```
+
+## Caveats
+
+Our evaluation of imputation accuracy is optimistic because we are evaluating on the training data. We should upgrade this to do a training/test split or cross-validation.
+
+## Hyperparameter tuning
+
+There are many other hyperparameters for GLRM that would be preferably tuned to the characteristics of our dataset. See [Hands on Machine Learning](https://bradleyboehmke.github.io/HOML/GLRM.html#tuning-to-optimize-for-unseen-data) for code that implements a grid search. We also could try a random search or optimized search.
+
+## Resources
+
+* [GLRM in Hands-on Machine Learning](https://bradleyboehmke.github.io/HOML/GLRM.html)
+* [h2o GLRM manual](http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/glrm.html)
+
+## References
+
+Boehmke, B., & Greenwell, B. M. (2019). Hands-On Machine Learning with R. CRC Press.
+
+Udell, Madeline, Corinne Horn, Reza Zadeh, and Stephen Boyd. “Generalized low rank models.” arXiv preprint arXiv:1410.0342, 2014.
