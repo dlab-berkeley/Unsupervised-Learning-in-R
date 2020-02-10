@@ -47,6 +47,7 @@ packages = list(
            "poLCA",       # latent class analysis
            "umap",        # umap
            "BiocManager", # needed to install hopach
+           "rio",         # Import/export
            "remotes")     # installation of packages from GitHub
 )
 
