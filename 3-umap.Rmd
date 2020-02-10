@@ -9,7 +9,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Highlights
 
+* UMAP is a nonlinear dimensionality reduction algorithm intended for data visualization.
+* It seeks to capture local distances (nearby points stay together) rather than global distances (all points transformed in the same way, as in principal component analysis).
+* It is inspired by **t-SNE** but arguably is preferable due to favorable properties: more scalable performance and better capture of local structure.
+* It originates from topology, and discovers **manifolds**: nonlinear surfaces that connect nearby points.
 
+## Key assumptions
+
+* All data are locally connected. That is, the data distribution can be approximately by smoothing between observations with similar covariate profiles.
 
 ## Data prep
 
@@ -101,6 +108,22 @@ p + geom_point(aes(x = result3$layout[, 1],
                    y = result3$layout[, 2]))
 ```
 
+## Additional hyperparameters
+
+Noting a few other highlights:
+
+* **n_components** - dimensions to return, typically 2 but can be larger.
+* **metric** - distance metric, such as euclidean, manhattan, cosine, etc.
+* **n_epochs** - number of optimization iterations to perform, default 200.
+
+```{r}
+# Review the many other hyperparameters.
+umap.defaults
+help(umap.defaults)
+```
+
+Also note that when calling umap, the function argument `method` can be changed to "umap-learn" to use the python package.
+
 More info on hyperparameters on the [umap-learn python documentation page](https://umap-learn.readthedocs.io/en/latest/parameters.html).
 
 ```{r}
@@ -119,4 +142,4 @@ More info on hyperparameters on the [umap-learn python documentation page](https
 
 ## References
 
-
+McInnes, L., Healy, J., & Melville, J. (2018). Umap: Uniform manifold approximation and projection for dimension reduction. arXiv preprint arXiv:1802.03426.
