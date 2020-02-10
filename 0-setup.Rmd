@@ -62,7 +62,9 @@ if (sum(!install_status) > 0) {
       paste0(paste(names(install_status)[!install_status], collapse = ", "), ".\n"))
   
   # Install any needed packages.
-  install.packages(packages$cran[!install_status])
+  install.packages(packages$cran[!install_status],
+                   # Specify repository so that we can install when knitting this file.
+                   repos = "http://cran.rstudio.com")
   
   # Load the newly installed packages.
   recheck = suppressWarnings(sapply(packages$cran[!install_status], require, character.only = TRUE, quietly = TRUE))
