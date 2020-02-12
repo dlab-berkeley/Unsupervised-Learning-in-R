@@ -36,15 +36,18 @@ str(data)
 
 ```{r data_structure}
 (task = list(
-  continuous = c("age", "trestbps", "chol", "thalach"),
+  continuous = c("age", "trestbps", "chol", "thalach", "oldpeak"),
   all = names(data)
 ))
+
+
 ```
 
 ## Basic hdbscan
 
 ```{r basic}
 library(dbscan)
+
 
 (groups = hdbscan(data[, task$continuous], minPts = 5L))
 
