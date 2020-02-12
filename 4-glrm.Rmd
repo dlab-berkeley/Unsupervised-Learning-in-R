@@ -265,14 +265,16 @@ str(new_data)
 
 ## Challenge
 
-1. Apply hdbscan to our compressed dataframe. Can you find a more effective clustering than the original?
-2. What about UMAP - how does it look?
+1. Refit the model adding arguments `regularization_x = "L1"`, `gamma_x = 1`. Plot the first archetype. Do you notice anything different?
+2. Apply hdbscan to our compressed dataframe. Can you find a more effective clustering than the original?
+3. What about UMAP - how does it look?
 
 ## Resources
 
 * [GLRM in Hands-on Machine Learning](https://bradleyboehmke.github.io/HOML/GLRM.html)
 * [h2o GLRM manual](http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/glrm.html)
-* [another h2o glrm tutorial](http://docs.h2o.ai/h2o-tutorials/latest-stable/tutorials/glrm/glrm-tutorial.html)
+* [Another h2o GLRM tutorial](http://docs.h2o.ai/h2o-tutorials/latest-stable/tutorials/glrm/glrm-tutorial.html)
+* [GLRM in Julia](https://github.com/madeleineudell/LowRankModels.jl)
 
 ## References
 
