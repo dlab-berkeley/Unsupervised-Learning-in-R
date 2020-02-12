@@ -1,0 +1,133 @@
+---
+title: "Latent class analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Highlights
+
+* Latent class analysis is designed for creating clusters out of binary or categorical variables.
+* It is a **model-based clustering** method based on maximum likelihood estimation.
+* It provides **soft-clustering**: each observation has a probability distribution over cluster membership.
+* It originates from the broader class of **finite mixture models**.
+* Latent dirichlet allocation (LDA) is a Bayesian form of LCA.
+
+## Load data
+
+```{r load_data}
+# From 1-clean-data.Rmd
+data = rio::import("data/clean-data-imputed.RData")
+
+names(data)
+str(data)
+(task = list(
+  factors = names(data)[sapply(data, is.factor)]))
+```
+
+## Basic LCA
+
+```{r run_lca}
+vars = task$factors
+(f = as.formula(paste0("cbind(", paste(vars, collapse = ", "), ") ~ 1")))
+
+model = poLCA(f, data, nclass = 2, maxiter = 100, nrep = 10, tol = 1e-7)
+```
+
+## Compare number of classes
+
+```{r compare_classes}
+library(knitr)
+library(kableExtra)
+
+run_lca = function(data, formula, nclass = 2, nrep = 10,
+                   maxiter = 5000, tolerance = 1e-7, verbose = FALSE) {
+  # TODO: capture output if verbose = FALSE
+  
+  lca = try(poLCA(formula, data, nclass = nclass, maxiter = maxiter, nrep = reps,
+                  tol = tolerance))
+  
+  if ("try-error" %in% class(lca)) {
+    cat("Ran into error.\n")
+    results = list(nclass = nclass, aic = NA, bic = NA, converged = NA, object = NULL)
+  } else {
+  
+    converged = lca$numiter < lca$maxiter
+  
+    # TODO: return object.
+    results = list(nclass = nclass, aic = lca$aic, bic = lca$bic, converged = converged,
+                   object = lca)
+  }
+  
+  return(results)
+}
+
+reps = 5L
+
+results = data.frame(matrix(NA, nrow = 0, ncol = 5))
+colnames = c("nclass", "aic", "bic", "converged", "description")
+colnames(results) = colnames
+
+set.seed(1)
+
+objects = list()
+outcome = NULL
+# We could use nicer names for the variables here.
+var_labels = vars
+
+# Try 2 to 6 classes (clusters)
+for (classes in 2:6) {
+  cat("Running LCA for", classes, "classes.\n")
+  
+  #################### 
+  # Run the latent class analysis.
+  result = run_lca(data, f, nclass = classes, nrep = reps)
+  
+  # Extract the return object and store separately.
+  object = result$object
+  
+  # Remove the object from the list so that we can store everything else in a dataframe.
+  result$object = NULL
+  
+  # Could put something in here.
+  result$description = ""
+  
+  # Use a string list name so that we don't need a null [[1]] element.
+  objects[[as.character(classes)]] = object
+  
+  # This will be a data.frame of summary statistics, 1 row per LCA.
+  results = rbind(results, result, stringsAsFactors = FALSE)
+  
+  # Correct colnames again.
+  colnames(results) = colnames
+  
+  #####
+  # Generate covariate table.
+  
+  # Currently restricting to complete cases. Could use imputed data instead possibly.
+  temp_data = na.omit(data[, c(outcome, vars)])
+  
+  # This function is defined in R/lca-covariate-table.R
+  table = lca_covariate_table(object, var_labels = var_labels,
+                              outcome = NULL,
+                              format = "html", # could be latex instead.
+                              data = temp_data[, vars])
+  
+  ################
+  print(kable(table, booktabs = TRUE, digits = c(rep(1, classes), 3, 3),
+            col.names = linebreak(colnames(table), align = "c"),
+            escape = FALSE) %>%
+        kable_styling(latex_options = c("scale_down"#,
+                                       # "striped"
+                                        )) %>%
+        row_spec(nrow(table) - 1L, hline_after = TRUE))
+  
+  # TODO: generate Excel export also, ideally as a separate tab within a single file.
+  
+}
+
+results
+
+```
