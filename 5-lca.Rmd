@@ -31,6 +31,8 @@ str(data)
 
 ```{r run_lca}
 vars = task$factors
+
+# Specify the formula based on the variables we want to use for clustering.
 (f = as.formula(paste0("cbind(", paste(vars, collapse = ", "), ") ~ 1")))
 
 model = poLCA(f, data, nclass = 2, maxiter = 100, nrep = 10, tol = 1e-7)
@@ -131,3 +133,11 @@ for (classes in 2:6) {
 results
 
 ```
+
+## Resources
+
+* Collins and Lanza. (2009). [Latent class and latent transition analysis](https://smile.amazon.com/Latent-Class-Transition-Analysis-Applications/dp/0470228393/)
+
+## References
+
+Figueroa, S. C., Kennedy, C. J., Wesseling, C., Wiemels, J. M., Morimoto, L., & Mora, A. M. (2020). Early immune stimulation and childhood acute lymphoblastic leukemia in Costa Rica: A comparison of statistical approaches. Environmental Research, 182, 109023.
