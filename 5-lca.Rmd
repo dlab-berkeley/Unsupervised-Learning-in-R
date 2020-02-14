@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * Latent class analysis is designed for creating clusters out of binary or categorical variables.
 * It is a **model-based clustering** method based on maximum likelihood estimation.
 * It provides **soft-clustering**: each observation has a probability distribution over cluster membership.
+* It uses a **greedy algorithm** with performance that varies with each analysis. Therefore we often will re-run an analysis 10 or 20 times and select the iteration with the best model fit.
 * It originates from the broader class of **finite mixture models**.
 * Latent dirichlet allocation (LDA) is a Bayesian form of LCA.
 
@@ -137,6 +138,7 @@ results
 ## Resources
 
 * Collins and Lanza. (2009). [Latent class and latent transition analysis](https://smile.amazon.com/Latent-Class-Transition-Analysis-Applications/dp/0470228393/)
+* [Latent profile analysis in R](https://cran.r-project.org/web/packages/tidyLPA/vignettes/Introduction_to_tidyLPA.html)
 
 ## References
 
