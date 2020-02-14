@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * Based on medoids: each cluster is based on a representative observation with the smallest distance to other cluster members.
 * Orders clusters and observations within clusters based on the distance metric.
 * The hierarchical tree splits don't have to be binary - could split into 3 or more clusters.
+* It will automatically determine the recommended number of clusters.
 
 ## Load data
 
@@ -25,6 +26,10 @@ str(data)
 # Convert factors to indicators
 result = ck37r::factors_to_indicators(data, verbose = TRUE)
 data = result$data
+
+# Standardize the data so that distances are more comparable.
+# NOTE: we might skip binary variables in this step.
+data = ck37r::standardize(data)
 ```
 
 ## Basic HOPACH
@@ -41,7 +46,7 @@ distances = distancematrix(data,
 # This is an n x n matrix.
 dim(distances)
 
-hobj = hopach(data, dmat = distances,
+hobj = hopach(data, dmat = distances, newmed = "nn",
               d = "euclid")
               # d = "cosangle")
 
@@ -52,10 +57,24 @@ hobj$clust$k
 # Review sizes of each cluster.
 hobj$clust$sizes 
 
+# Review the cluster assignment vector.
+# These counts correspond to the cluster sizes that we reviewed.
+table(hobj$clustering$labels)
+
+# Extract medoids - representative observations for each cluster.
+# These are the row indices from the dataframe.
+hobj$clustering$medoids
+
 # This plot is recommended but does not seeem that useful.
 # Red = small distance, white = large distance.
 dplot(distances, hobj, ord = "final",
       main = "Distance matrix", showclusters = FALSE)  
+
+```
+
+## Bootstrap analysis
+
+```{r bootstrap, fig.width = 6, fig.height = 6}
 
 # Bootstrap analysis
 # TODO: identify how to set seed.
@@ -66,15 +85,14 @@ boot_result = boothopach(data, hobj, B = 100)
 bootplot(boot_result, hobj, ord = "bootp",
          main = "Bootstrap plot", showclusters = FALSE)
 
-# Extract medoids - representative observations for each cluster.
-# These are the row indices.
-hobj$clustering$medoids
+
 ```
 
 ## Challenges
 
 1. Change the distance metric to "cosangle" and re-run. How do your results compare?
 2. Cluster the variables rather than the observations by transposing the data frame with `t()` and re-running the distance calculation and clustering. Examine the medoids to find the representative variables in the dataset.
+3. Don't standardize the data and re-run. How do the results compare? What if you standardize everything except the binary variables?
 
 ## Resources
 

@@ -1,0 +1,19 @@
+---
+title: "HOPACH challenges"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Code to skip binary variables when standardizing
+
+```{r}
+# Standardize the data so that distances are more comparable.
+# NOTE: we might skip binary variables in this step.
+data =
+  ck37r::standardize(data,
+                     skip_vars = c("sex", "fbs", "exang",
+                                   unlist(result$factor_names)))
+```
