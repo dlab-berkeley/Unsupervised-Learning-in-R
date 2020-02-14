@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load_data}
 # From 1-clean-data.Rmd
-data = rio::import("data/data-processed.RData")
+data = rio::import("data/clean-data-imputed.RData")
 
 # Convert factors to indicators.
 # This could also be done in dplyr in one line.
