@@ -1,0 +1,16 @@
+---
+title: "hdbscan"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Code to standardize variables
+
+```{r}
+# Standardize the continuous variables.
+data = ck37r::standardize(data, skip_vars = setdiff(task$all, task$continuous))
+summary(data)
+```
