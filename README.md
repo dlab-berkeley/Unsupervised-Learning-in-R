@@ -30,8 +30,9 @@ frames, installation of packages, and plotting.
 
 Participants should have access to a computer with the following software:
 
- * R version 3.6 or greater
- * RStudio
+ * [R version 3.6](https://cran.rstudio.com/) or greater
+ * [RStudio](https://rstudio.com/products/rstudio/download/#download)
+ * [RTools](https://cran.r-project.org/bin/windows/Rtools/) - if using Windows
  
 ## Initial steps for participants
 
