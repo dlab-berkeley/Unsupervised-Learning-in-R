@@ -1,0 +1,87 @@
+---
+title: "HOPACH: hierarchical medoid clustering"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Highlights
+
+* Hierarchical cluster algorithm that is divisive (top down), but also will consider combining clusters if beneficial.
+* Based on medoids: each cluster is based on a representative observation with the smallest distance to other cluster members.
+* Orders clusters and observations within clusters based on the distance metric.
+* The hierarchical tree splits don't have to be binary - could split into 3 or more clusters.
+
+## Load data
+
+```{r load_data}
+# From 1-clean-data.Rmd
+data = rio::import("data/clean-data-imputed.RData")
+
+str(data)
+
+# Convert factors to indicators
+result = ck37r::factors_to_indicators(data, verbose = TRUE)
+data = result$data
+```
+
+## Basic HOPACH
+
+```{r basic_hopach}
+library(hopach)
+
+# We use the numeric data matrix here, which has converted factors to indicators.
+distances = distancematrix(data,
+                           d = "euclid",
+                           # d = "cosangle",
+                           na.rm = TRUE)
+
+# This is an n x n matrix.
+dim(distances)
+
+hobj = hopach(data, dmat = distances,
+              d = "euclid")
+              # d = "cosangle")
+
+
+# Number of clusters identified.
+hobj$clust$k  
+
+# Review sizes of each cluster.
+hobj$clust$sizes 
+
+# This plot is recommended but does not seeem that useful.
+# Red = small distance, white = large distance.
+dplot(distances, hobj, ord = "final",
+      main = "Distance matrix", showclusters = FALSE)  
+
+# Bootstrap analysis
+# TODO: identify how to set seed.
+boot_result = boothopach(data, hobj, B = 100)
+
+# We want to see large bands of the same color, which indicate cluster stability.
+# May need to click "zoom" to view the plot.
+bootplot(boot_result, hobj, ord = "bootp",
+         main = "Bootstrap plot", showclusters = FALSE)
+
+# Extract medoids - representative observations for each cluster.
+# These are the row indices.
+hobj$clustering$medoids
+```
+
+## Challenges
+
+1. Change the distance metric to "cosangle" and re-run. How do your results compare?
+2. Cluster the variables rather than the observations by transposing the data frame with `t()` and re-running the distance calculation and clustering. Examine the medoids to find the representative variables in the dataset.
+
+## Resources
+
+* [Bioconductor's HOPACH package](https://www.bioconductor.org/packages/release/bioc/vignettes/hopach/inst/doc/hopach.pdf)
+
+## References
+
+van der Laan, M. J., & Pollard, K. S. (2003). A new algorithm for hybrid hierarchical clustering with visualization and the bootstrap. Journal of Statistical Planning and Inference, 117(2), 275-303.
+
+Pollard, K. S., & van der Laan, M. J. (2005). Cluster analysis of genomic data. In Bioinformatics and Computational Biology Solutions Using R and Bioconductor (pp. 209-228). Springer, New York, NY.
