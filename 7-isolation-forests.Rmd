@@ -1,0 +1,63 @@
+---
+title: "Isolation forest"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load data
+
+```{r load_data}
+# From 1-clean-data.Rmd
+data = rio::import("data/clean-data-imputed.RData")
+
+str(data)
+```
+
+## Basic isolation forest
+
+```{r basic_isolation}
+library(h2o)
+
+# Start up h2o.
+h2o.init()
+
+h2o_df = as.h2o(data)
+
+# Split dataset giving the training dataset 75% of the data
+h2o_split <- h2o.splitFrame(data = h2o_df, ratios=0.75)
+
+# Create a training set from the 1st dataset in the split
+train <- h2o_split[[1]]
+
+# Create a testing set from the 2nd dataset in the split
+test <- h2o_split[[2]]
+
+# Build an Isolation forest model
+model <- h2o.isolationForest(training_frame=train,
+                             sample_rate = 0.1,
+                             max_depth = 20,
+                             ntrees = 50)
+
+# Calculate score
+score <- h2o.predict(model, test)
+result_pred <- as.data.frame(score$predict)
+
+summary(result_pred)
+
+library(ggplot2)
+qplot(result_pred$predict) + theme_minimal()
+
+# Predict the leaf node assignment
+ln_pred <- h2o.predict_leaf_node_assignment(model, test)
+```
+
+## Resources
+
+* [h2o blog post on isolation forests](https://www.h2o.ai/blog/anomaly-detection-with-isolation-forests-using-h2o/) - Nov. 2018
+* [h2o documentation for isolation forests](http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/if.html)
+
+## References
+
