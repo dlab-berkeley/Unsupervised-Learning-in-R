@@ -36,7 +36,7 @@ Participants should have access to a computer with the following software:
  
 ## Initial steps for participants
 
-To prepare for the workshop, please download the materials and work through the package installation in `0-setup.Rmd`. Please report any errors to the [GitHub issue queue](https://github.com/dlab-berkeley/Unsupervised-Learning-in-R/issues).
+To prepare for the workshop, please download the materials and work through the package installation in `0-install.Rmd`. Please report any errors to the [GitHub issue queue](https://github.com/dlab-berkeley/Unsupervised-Learning-in-R/issues).
 
 There is also an [RStudio Cloud workspace](https://rstudio.cloud/project/930459) that can be used.
  
@@ -54,4 +54,3 @@ Books
  * Dolnicar et al. (2018). [Market segmentation analysis](https://smile.amazon.com/Market-Segmentation-Analysis-Understanding-Professionals-ebook/dp/B07FQDSF3X/) - free, closely tied to R, and chapter 7 is especially helpful
  * Izenman (2013). [Modern Multivariate Statistical Techniques](https://www.amazon.com/Modern-Multivariate-Statistical-Techniques-Classification-ebook/dp/B00HWUR9CS/)
  * Everitt et al. (2011). [Cluster Analysis](https://www.amazon.com/Cluster-Analysis-Wiley-Probability-Statistics-ebook/dp/B005CPJSME)
- * Rencher & Christensen (2012). [Methods of Multivariate Analysis](https://www.amazon.com/Methods-Multivariate-Analysis-Probability-Statistics-ebook/dp/B008Z5OB9I/) - very technical
