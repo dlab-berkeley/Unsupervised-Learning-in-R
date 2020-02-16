@@ -155,4 +155,4 @@ if (sum(!install_status) > 0) {
 
 ## Slides
 
-Now open up the slides available here: [TBD].
+Now open up the slides available here: [https://dlab-berkeley.github.io/Unsupervised-Learning-in-R/slides.html](https://dlab-berkeley.github.io/Unsupervised-Learning-in-R/slides.html)
