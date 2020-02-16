@@ -1,6 +1,5 @@
 *.RData
 *.csv
-*.html
 
 # History files
 .Rhistory
