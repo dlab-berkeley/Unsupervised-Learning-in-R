@@ -1,0 +1,169 @@
+---
+title: "Unsupervised Learning in R"
+subtitle: "Clustering, dimension reduction, and anomaly detection"
+author: "Chris Kennedy"
+date: "February 15, 2020"
+# (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: ["scrollable.css", "mtheme_max.css", "fonts_mtheme_max.css"]
+    self_contained: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      slideNumberFormat: |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>`
+    seal: false   
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+# Set global R options
+options(htmltools.dir.version = FALSE, servr.daemon = TRUE)
+# Set global knitr chunk options
+knitr::opts_chunk$set(
+  fig.align = "center", 
+  #cache = TRUE,
+  error = FALSE,
+  message = FALSE, 
+  warning = FALSE, 
+  collapse = TRUE,
+  eval = FALSE
+)
+library(ggplot2)
+# This is good for getting the ggplot background consistent with
+# the html background color
+thm <- theme_bw() + 
+  theme(
+    panel.background = element_rect(fill = "transparent", colour = NA), 
+    plot.background = element_rect(fill = "transparent", colour = NA),
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+class: title-slide   
+<a href="https://github.com/dlab-berkeley/Unsupervised-Learning-in-R"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+<br><br><br><br>
+# .font130[Unsupservised Learning in R]
+
+### Chris Kennedy  
+### February 15, 2020
+
+---
+
+# Definition of unsupervised learning
+
+Broad class of machine learning in which we seek to detect patterns in our data without reference to an outcome variable. 
+
+Main subtypes are:
+* **Clustering** - finding groups in a dataset
+   * Most common method: k-means
+* **Dimension reduction** - compressing the data into a smaller number of summary variables
+   * Most common method: principal component analysis (PCA)
+* **Anomaly detection** - finding outliers or otherwise strange observations
+
+---
+
+# Content outline
+
+* Package installation
+* Data cleaning
+* **HDBScan** - hierarchical density-based clustering
+* **Uniform Manifold Approximation and Projection (UMAP)** - nonlinear dimension reduction
+* **Generalized Low-Rank Models (GLRM)** - PCA-like linear dimension reduction 
+* **Latent Class Analysis (LCA)** - clustering for categorical variables
+* **Hierarchical Ordered Partitioning and Collapsing Hybrid (HOPACH)** - reversible hierarchical clustering
+* **Isolation forests** - anomaly detection
+
+---
+
+# Package installation: 0-install.Rmd
+
+Sources of packages
+* **CRAN** - main package system, well-tested
+* **GitHub** - bleeding edge packages, varied testing status
+* **Bioconductor** - computational biology focus, well-tested
+
+[RStudio Cloud workspace](https://rstudio.cloud/project/930459)
+* Sign in with GitHub or Google account
+* Click "git pull" to get the latest code, just in case
+* Packages should already be installed, except possibly for h2o and python miniconda (not needed)
+
+---
+
+# Data cleaning: 1-clean.Rmd
+
+* Load and cache our remote file
+* Convert categoricals to factors
+* Save an unimputed dataset
+* Restrict to complete cases
+* Save an "imputed" dataset
+
+---
+
+# Hdbscan: density-based clustering
+
+* HDBScan is a **density-based clustering** algorithm, where observations that are near each other get assigned to clusters
+* Observations that are not near a group are considered noise or outliers.
+* The number of clusters is discovered automatically - nice!
+* It is hierarchical, meaning that clusters are linked and we can choose to select fewer clusters with more observations if preferred.
+* It is intended for continuous variables due to its focus on density.
+* It is expected to slow down once there are more than 50-100 covariates.
+* It provides a loose form of **soft clustering**: a score for how certain it is about cluster membership.
+
+---
+
+# UMAP: nonlinear dimension reduction
+
+* UMAP is a nonlinear dimensionality reduction algorithm intended for data visualization.
+* It seeks to capture local distances (nearby points stay together) rather than global distances (all points transformed in the same way, as in principal component analysis).
+* It is inspired by **t-SNE** but arguably is preferable due to favorable properties: more scalable performance and better capture of local structure.
+* It originates from topology, and discovers **manifolds**: nonlinear surfaces that connect nearby points.
+
+---
+
+# GLRM: linear dimension reduction
+
+* GLRM is a linear dimensionality reduction algorithm similar to principal components analysis (PCA).
+* GLRM supports categorical, ordinal, and binary variables in addition to continuous variables.
+* It allows missing data, and can be used for missing data imputation.
+* It was invented in 2014 at Stanford and can be used in R through the java-based h2o.ai framework.
+
+---
+
+# LCA: latent class analysis
+
+* Latent class analysis is designed for creating clusters out of binary or categorical variables.
+* It is a **model-based clustering** method based on maximum likelihood estimation.
+* It provides **soft-clustering**: each observation has a probability distribution over cluster membership.
+* It uses a **greedy algorithm** with performance that varies with each analysis. Therefore we often will re-run an analysis 10 or 20 times and select the iteration with the best model fit.
+* It originates from the broader class of **finite mixture models**.
+* Latent dirichlet allocation (LDA) is a Bayesian form of LCA.
+
+---
+
+# HOPACH: hierarchical ordered mediod clustering
+
+* Hierarchical cluster algorithm that is divisive (top down), but also will consider combining clusters if beneficial.
+* Based on medoids: each cluster is based on a representative observation with the smallest distance to other cluster members.
+* Orders clusters and observations within clusters based on the distance metric.
+* The hierarchical tree splits don't have to be binary - could split into 3 or more clusters.
+* It will automatically determine the recommended number of clusters.
+
+<!--
+# Isolation forests: anomaly detection
+
+# Cluster validation
+
+# Conclusion
+-->
