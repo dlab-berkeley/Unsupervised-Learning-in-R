@@ -20,11 +20,11 @@ frames, installation of packages, and plotting.
 
 **Prerequisite workshops**
 
- * [R Fundamentals](https://github.com/dlab-berkeley/R-Fundamentals)
+ * [R Fundamentals](https://github.com/dlab-berkeley/R-Fundamentals) or similar training in R basics.
  
 **Recommended workshops**
 
- * [Machine Learning in R](https://github.com/dlab-berkeley/Machine-Learning-in-R)
+ * [Machine Learning in R](https://github.com/dlab-berkeley/Machine-Learning-in-R) or other supervised learning experience.
 
 ## Technology requirements
 
